@@ -43,7 +43,9 @@ public class CVEDataService {
                     .build();
 
             DocumentContext documentContext = JsonPath.using(configuration).parse(response);
+
             Map<String, String> propertiesMap = jsonPathPropertiesHelperValues.getAllProperties();
+
             fetchValuesFromJSONResponse(documentContext, propertiesMap);
 
         } else {
@@ -55,23 +57,32 @@ public class CVEDataService {
     private void fetchValuesFromJSONResponse(DocumentContext documentContext, Map<String, String> propertiesMap) {
 
         for (Map.Entry<String, String> entry : propertiesMap.entrySet()) {
+
             log.info(entry.getKey());
             Object queryResult;
+
             try {
+
                 queryResult = documentContext.read(entry.getValue());
+
                 if (queryResult instanceof List<?> queryResultList) {
+
                     List<Object> resultList = queryResultList.stream()
                             .map(Object.class::cast)
                             .toList();
                     fetchFromJSONArray(entry, resultList);
+
                 } else {
+
                     String queryResultStr = String.valueOf(queryResult);
                     if (queryResultStr.isEmpty()) {
                         log.error(VALUE_NOT_FOUND_FOR, entry.getKey());
                     } else {
                         log.info(queryResultStr);
                     }
+
                 }
+
             } catch (InvalidPathException e) {
                 log.error("Invalid JSON path: {}", e.getMessage());
             }
@@ -82,6 +93,7 @@ public class CVEDataService {
     private void fetchFromJSONArray(Map.Entry<String, String> entry, List<Object> resultList) {
 
         if (!resultList.isEmpty()) {
+
             resultList.forEach(
                     element -> {
                         String stringValue = Optional.ofNullable(element).map(Object::toString).orElse("");
@@ -91,6 +103,7 @@ public class CVEDataService {
                             log.info(stringValue);
                         }
                     });
+
         } else {
             log.error(VALUE_NOT_FOUND_FOR, entry.getKey());
         }
