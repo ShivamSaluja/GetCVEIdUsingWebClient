@@ -16,7 +16,7 @@ To start the application :
   You can check if Gradle is installed by running gradle -v in your terminal.
   The project was developed using gradle version 8.1.1
   If it's not installed, you can download and install it from the official website: https://gradle.org/install/
-- Setup Up Java Home in the env variable. The project was developed using Open JDK 20.0.1 .
+- Setup Up Java Home in the env variable. The project was developed using Open JDK 21 .
 - Open the root directory i.e ..\demo run command : gradlew clean build
 - Run : gradlew bootRun --args=CVE-2019-1010218
     - Here CVE-2019-1010218 is the CVE-ID passed as command line input.
