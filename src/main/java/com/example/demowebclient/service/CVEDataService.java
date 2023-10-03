@@ -6,8 +6,6 @@ import com.example.demowebclient.utils.rest.WebClientUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
-
 import java.util.*;
 
 @Service
@@ -18,7 +16,6 @@ public class CVEDataService {
     private final JsonPathPropertiesHelper jsonPathPropertiesHelperValues;
     private final WebClientUtils webClientUtils;
     private static final Logger log = LoggerFactory.getLogger(CVEDataService.class);
-    public static final String AN_ERROR_OCCURRED = "An error occurred: {}";
 
     public CVEDataService(JsonPathPropertiesHelper jsonPathPropertiesHelperValues, ConfigurationURL configurationURL, WebClientUtils webClientUtils) {
         this.jsonPathPropertiesHelperValues = jsonPathPropertiesHelperValues;
@@ -27,12 +24,15 @@ public class CVEDataService {
     }
 
     public void fetchCVEDataResults(String cvdId) {
+
         Map<String, String> param = Collections.singletonMap("cveId", cvdId);
-        Mono<String> responseString = webClientUtils.makeWebClientCall(configurationURL.getCveIdHost(), configurationURL.getCveIdtPath(), param);
-        responseString.subscribe(
-                this::parseResponse,
-                error -> log.error(AN_ERROR_OCCURRED, error.getMessage())
-        );
+
+        String responseString = webClientUtils.makeWebClientCall(configurationURL.getCveIdHost(), configurationURL.getCveIdtPath(), param);
+
+        log.debug("Response String is : {} ", responseString);
+
+        parseResponse(responseString);
+
     }
 
     private void parseResponse(String response) {

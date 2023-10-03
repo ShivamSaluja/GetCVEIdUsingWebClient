@@ -7,6 +7,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.util.Arrays;
+
 @SpringBootApplication
 public class DemoApplication implements CommandLineRunner{
 
@@ -23,10 +25,11 @@ public class DemoApplication implements CommandLineRunner{
 
 	@Override
 	public void run(String... args) throws RuntimeException {
-		if (args.length == 0) {
-			log.error("CVE ID missing in Command Line Argument");
+		if (args.length > 0) {
+			log.info("Received {} command-line arguments ",   args.length );
+			Arrays.stream(args).forEach(cveDataService::fetchCVEDataResults);
 		} else {
-			cveDataService.fetchCVEDataResults(args[0]);//Update Name
+			log.error("No command-line arguments provided.");
 		}
 	}
 

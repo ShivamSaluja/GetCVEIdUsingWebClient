@@ -1,15 +1,16 @@
 package com.example.demowebclient.utils.rest;
 
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.io.IOException;
 import java.util.Map;
 
 
@@ -26,55 +27,42 @@ public class WebClientUtils {
         this.webClient = webClientBuilder.build();
     }
 
-    public Mono<String> makeWebClientCall(String host, String path, Map<String, String> requestParams) {
+    @CircuitBreaker(name = "makeWebClientCall", fallbackMethod = "fallbackMakeWebClientCall")
+    public String makeWebClientCall(String host, String path, Map<String, String> requestParams) {
 
         return webClient
                 .get()
                 .uri(uriBuilder -> {
-                    uriBuilder
-                            .scheme(HTTPS)
-                            .host(host)
-                            .path(path);
+                            uriBuilder
+                                    .scheme(HTTPS)
+                                    .host(host)
+                                    .path(path);
 
-                    for (Map.Entry<String, String> entry : requestParams.entrySet()) {
-                        uriBuilder.queryParam(entry.getKey(), entry.getValue());
-                    }
-                    return uriBuilder.build();
-                })
+                            for (Map.Entry<String, String> entry : requestParams.entrySet()) {
+                                uriBuilder.queryParam(entry.getKey(), entry.getValue());
+                            }
+
+                            log.info("Get request API URL : {}", uriBuilder.build());
+
+                            return uriBuilder.build();
+                        }
+                )
                 .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> {
+                    if (clientResponse.statusCode().equals(HttpStatus.NOT_FOUND)) {
+                        return Mono.error(new HttpClientErrorException(HttpStatus.NOT_FOUND,  "Entity not found."));
+                    } else {
+                        return Mono.error(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
+                    }
+                })
                 .bodyToMono(String.class)
-                .onErrorResume(IOException.class, this::handleIOException)
-                .onErrorResume(ResourceAccessException.class, this::handleResourceAccessException)
-                .onErrorResume(HttpClientErrorException.class, this::handleHttpClientErrorException)
-                .onErrorResume(Exception.class, this::handleGenericException);
-
+                .block();
     }
 
-    private Mono<String> handleIOException(IOException ioException) {
 
-        log.error(AN_ERROR_OCCURRED_HTTP_STATUS, "IOException  occurred : " + ioException.getMessage());
-
-        return Mono.just("Error: An IOException occurred");
-    }
-
-    private Mono<String> handleResourceAccessException(ResourceAccessException resourceAccessException) {
-
-        log.error(AN_ERROR_OCCURRED_HTTP_STATUS, "ResourceAccessException  occurred : " + resourceAccessException.getMessage());
-
-        return Mono.just("Error: An ResourceAccessException occurred");
-    }
-
-    private Mono<String> handleHttpClientErrorException(HttpClientErrorException handleHttpClientErrorException) {
-
-        log.error(AN_ERROR_OCCURRED_HTTP_STATUS, "HttpClientErrorException  occurred : " + handleHttpClientErrorException.getMessage());
-
-        return Mono.just("Error: An HttpClientErrorException occurred");
-    }
-
-    private Mono<String> handleGenericException(Exception exception) {
-
-        log.error(AN_ERROR_OCCURRED_HTTP_STATUS, exception.getMessage());
-
-        return Mono.just("Error: Something went wrong");
+    public String fallbackMakeWebClientCall(Throwable throwable) {
+        log.error(AN_ERROR_OCCURRED_HTTP_STATUS, throwable.getMessage());
+        return  throwable.getMessage();
     }
 }
+
