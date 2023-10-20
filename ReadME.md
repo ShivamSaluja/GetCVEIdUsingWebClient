@@ -1,4 +1,4 @@
-Project Outline:
+huProject Outline:
 1. Query the NVD Server using their REST API interface.
   Using the following API : https://services.nvd.nist.gov/rest/json/cvehistory/2.0?cveId=CVE-2019-1010218
 
@@ -13,7 +13,7 @@ Project Outline:
 
 Implementation: 
 
-Used Spring-boot framework and WebClient API Client to fetch the JSON response NVD Server.
+Used Spring-boot framework and WebClient to fetch the JSON response from the above api.
 
 To start the application :
 - Ensure You Have Gradle Installed: Make sure you have Gradle installed on your system.
