@@ -24,5 +24,3 @@ To start the application :
 - Open the root directory i.e ..\demo run command : gradlew clean build
 - Run : gradlew bootRun --args=CVE-2019-1010218
     - Here CVE-2019-1010218 is the CVE-ID passed as command line input.
-
-TODO Task - Refer this blog and enhance the code - https://habeebcycle.medium.com/spring-boot-webflux-resilient-service-with-resilience4j-retry-circuitbreaker-with-router-dbbc37427fc7
