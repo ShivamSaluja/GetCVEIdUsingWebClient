@@ -6,10 +6,10 @@ Project Outline:
 
 3. From the api response, extract the below fields from the JSON Output and print the below information :
 
-3.1 CVE-ID
-3.2 Description
-3.3 CVSS Vector String (both V2 and V3)
-3.4 CVE Updated Timestamp
+  3.1 CVE-ID
+  3.2 Description
+  3.3 CVSS Vector String (both V2 and V3)
+  3.4 CVE Updated Timestamp
 
 Used Spring-boot framework and WebClient API Client to fetch the JSON response NVD Server.
 
