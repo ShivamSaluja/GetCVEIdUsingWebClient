@@ -10,6 +10,9 @@ Project Outline:
 - CVSS Vector String (both V2 and V3)
 - CVE Updated Timestamp
 
+
+Implementation: 
+
 Used Spring-boot framework and WebClient API Client to fetch the JSON response NVD Server.
 
 To start the application :
