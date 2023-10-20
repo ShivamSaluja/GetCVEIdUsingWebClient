@@ -1,4 +1,4 @@
-huProject Outline:
+Project Outline:
 1. Query the NVD Server using their REST API interface and the following API : https://services.nvd.nist.gov/rest/json/cvehistory/2.0?cveId=CVE-2019-1010218
 
 2. The cveId in the above api must be passed  as command line parameter.
