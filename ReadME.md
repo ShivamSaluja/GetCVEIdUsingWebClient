@@ -4,7 +4,8 @@ Project Outline:
 
 2. The cveId in the above api must be passed  as command line parameter.
 
-3. From the api response, extract the below fields from the JSON Output and print the below information
+3. From the api response, extract the below fields from the JSON Output and print the below information :
+
 3.1 CVE-ID
 3.2 Description
 3.3 CVSS Vector String (both V2 and V3)
