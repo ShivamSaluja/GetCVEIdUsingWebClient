@@ -1,7 +1,6 @@
 Project Outline:
 1. Query the NVD Server using their REST API interface.
-  Using the following API :
-  https://nvd.nist.gov/developers/vulnerabilities
+  Using the following API : https://services.nvd.nist.gov/rest/json/cvehistory/2.0?cveId=CVE-2019-1010218
 
 2. Pass CVE-ID as input (command line parameter), extract the below fields from the JSON Output  and print the below information
 - CVE-ID
